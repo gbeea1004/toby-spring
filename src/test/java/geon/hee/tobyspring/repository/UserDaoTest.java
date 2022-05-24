@@ -36,8 +36,4 @@ class UserDaoTest {
         assertThat(findUser.getName()).isEqualTo(user.getName());
         assertThat(findUser.getPassword()).isEqualTo(user.getPassword());
     }
-
-    @Test
-    void get() {
-    }
 }

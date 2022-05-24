@@ -1,9 +1,9 @@
 package geon.hee.tobyspring.repository;
 
-import geon.hee.tobyspring.config.connection.ConnectionMaker;
 import geon.hee.tobyspring.domain.User;
 import lombok.RequiredArgsConstructor;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +12,7 @@ import java.sql.SQLException;
 @RequiredArgsConstructor
 public class UserDao {
 
-    private final ConnectionMaker connectionMaker;
+    private final DataSource dataSource;
 
     /**
      * 유저 회원가입
@@ -20,7 +20,7 @@ public class UserDao {
      * @param user 유저 정보
      */
     public void add(User user) throws SQLException {
-        Connection con = connectionMaker.makeConnection();
+        Connection con = dataSource.getConnection();
         PreparedStatement pstmt = con.prepareStatement("insert into users(id, name, password) values (?, ?, ?)");
         pstmt.setString(1, user.getId());
         pstmt.setString(2, user.getName());
@@ -39,7 +39,7 @@ public class UserDao {
      * @return 조회된 유저 정보
      */
     public User get(String id) throws SQLException {
-        Connection con = connectionMaker.makeConnection();
+        Connection con = dataSource.getConnection();
         PreparedStatement pstmt = con.prepareStatement("select * from users where id = ?");
         pstmt.setString(1, id);
 
