@@ -3,6 +3,8 @@ package geon.hee.tobyspring.repository;
 import geon.hee.tobyspring.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.sql.SQLException;
 
@@ -14,7 +16,8 @@ class UserDaoTest {
 
     @BeforeEach
     void setUp() {
-        userDao = new DaoFactory().userDao();
+        ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactory.class);
+        userDao = ac.getBean("userDao", UserDao.class);
     }
 
     @Test
