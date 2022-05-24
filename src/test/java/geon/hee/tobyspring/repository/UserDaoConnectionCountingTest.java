@@ -1,5 +1,7 @@
 package geon.hee.tobyspring.repository;
 
+import geon.hee.tobyspring.config.CountingDaoFactory;
+import geon.hee.tobyspring.config.connection.CountingConnectionMaker;
 import geon.hee.tobyspring.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;

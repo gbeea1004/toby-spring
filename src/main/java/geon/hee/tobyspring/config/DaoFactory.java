@@ -1,5 +1,8 @@
-package geon.hee.tobyspring.repository;
+package geon.hee.tobyspring.config;
 
+import geon.hee.tobyspring.config.connection.ConnectionMaker;
+import geon.hee.tobyspring.config.connection.MyConnectionMaker;
+import geon.hee.tobyspring.repository.UserDao;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

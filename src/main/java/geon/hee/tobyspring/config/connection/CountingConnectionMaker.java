@@ -1,4 +1,4 @@
-package geon.hee.tobyspring.repository;
+package geon.hee.tobyspring.config.connection;
 
 import lombok.RequiredArgsConstructor;
 

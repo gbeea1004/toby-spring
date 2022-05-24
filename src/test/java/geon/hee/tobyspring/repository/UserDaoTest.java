@@ -1,5 +1,6 @@
 package geon.hee.tobyspring.repository;
 
+import geon.hee.tobyspring.config.DaoFactory;
 import geon.hee.tobyspring.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

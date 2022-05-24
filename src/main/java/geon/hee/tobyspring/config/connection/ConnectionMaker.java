@@ -1,4 +1,4 @@
-package geon.hee.tobyspring.repository;
+package geon.hee.tobyspring.config.connection;
 
 import java.sql.Connection;
 import java.sql.SQLException;

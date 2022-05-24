@@ -1,5 +1,6 @@
 package geon.hee.tobyspring.repository;
 
+import geon.hee.tobyspring.config.connection.ConnectionMaker;
 import geon.hee.tobyspring.domain.User;
 import lombok.RequiredArgsConstructor;
 
