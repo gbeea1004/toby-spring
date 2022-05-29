@@ -45,15 +45,37 @@ public class UserDao {
 
         ResultSet rs = pstmt.executeQuery();
         rs.next();
-        User user = new User();
-        user.setId(rs.getString("id"));
-        user.setName(rs.getString("name"));
-        user.setPassword(rs.getString("password"));
+        User user = new User(rs.getString("id"), rs.getString("name"), rs.getString("password"));
 
         rs.close();
         pstmt.close();
         con.close();
 
         return user;
+    }
+
+    public void deleteAll() throws SQLException {
+        Connection con = dataSource.getConnection();
+        PreparedStatement pstmt = con.prepareStatement("delete from users");
+
+        pstmt.executeUpdate();
+
+        pstmt.close();
+        con.close();
+    }
+
+    public int getCount() throws SQLException {
+        Connection con = dataSource.getConnection();
+        PreparedStatement pstmt = con.prepareStatement("select count(*) from users");
+        ResultSet rs = pstmt.executeQuery();
+        rs.next();
+
+        int count = rs.getInt(1);
+
+        rs.close();
+        pstmt.close();
+        con.close();
+
+        return count;
     }
 }
