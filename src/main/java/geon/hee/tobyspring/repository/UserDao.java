@@ -21,16 +21,7 @@ public class UserDao {
      * @param user 유저 정보
      */
     public void add(User user) throws SQLException {
-        Connection con = dataSource.getConnection();
-        PreparedStatement pstmt = con.prepareStatement("insert into users(id, name, password) values (?, ?, ?)");
-        pstmt.setString(1, user.getId());
-        pstmt.setString(2, user.getName());
-        pstmt.setString(3, user.getPassword());
-
-        pstmt.executeUpdate();
-
-        pstmt.close();
-        con.close();
+        jdbcContextWithStatementStrategy(new AddStatement(user));
     }
 
     /**
@@ -61,28 +52,11 @@ public class UserDao {
         return user;
     }
 
+    /**
+     * 유저 전체 삭제
+     */
     public void deleteAll() throws SQLException {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            con = dataSource.getConnection();
-            pstmt = con.prepareStatement("delete from users");
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {}
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {}
-            }
-        }
+        jdbcContextWithStatementStrategy(new DeleteAllStatement());
     }
 
     public int getCount() throws SQLException {
@@ -103,17 +77,48 @@ public class UserDao {
             if (rs != null) {
                 try {
                     rs.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                }
             }
             if (pstmt != null) {
                 try {
                     pstmt.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                }
             }
             if (con != null) {
                 try {
                     con.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                }
+            }
+        }
+    }
+
+    private void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = dataSource.getConnection();
+
+            pstmt = stmt.makePreparedStatement(con);
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (pstmt != null) {
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                }
             }
         }
     }
