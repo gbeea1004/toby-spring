@@ -37,4 +37,8 @@ public class JdbcContext {
             }
         }
     }
+
+    public void executeSql(final String query) throws SQLException {
+        workWithStatementStrategy(con -> con.prepareStatement(query));
+    }
 }
