@@ -21,7 +21,13 @@ public class UserDao {
      * @param user 유저 정보
      */
     public void add(User user) throws SQLException {
-        jdbcContextWithStatementStrategy(new AddStatement(user));
+        jdbcContextWithStatementStrategy(con -> {
+            PreparedStatement pstmt = con.prepareStatement("insert into users(id, name, password) values (?, ?, ?)");
+            pstmt.setString(1, user.getId());
+            pstmt.setString(2, user.getName());
+            pstmt.setString(3, user.getPassword());
+            return pstmt;
+        });
     }
 
     /**
@@ -56,7 +62,7 @@ public class UserDao {
      * 유저 전체 삭제
      */
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(new DeleteAllStatement());
+        jdbcContextWithStatementStrategy(con -> con.prepareStatement("delete from users"));
     }
 
     public int getCount() throws SQLException {
