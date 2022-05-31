@@ -1,7 +1,6 @@
 package geon.hee.tobyspring.repository;
 
 import geon.hee.tobyspring.domain.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.sql.DataSource;
@@ -10,11 +9,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@RequiredArgsConstructor
 public class UserDao {
 
     private final JdbcContext jdbcContext;
     private final DataSource dataSource;
+
+    public UserDao(DataSource dataSource) {
+        this.jdbcContext = new JdbcContext(dataSource);
+        this.dataSource = dataSource;
+    }
 
     /**
      * 유저 회원가입

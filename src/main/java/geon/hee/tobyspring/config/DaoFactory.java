@@ -1,6 +1,5 @@
 package geon.hee.tobyspring.config;
 
-import geon.hee.tobyspring.repository.JdbcContext;
 import geon.hee.tobyspring.repository.UserDao;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,12 +12,7 @@ public class DaoFactory {
 
     @Bean
     public UserDao userDao() {
-        return new UserDao(jdbcContext(), dataSource());
-    }
-
-    @Bean
-    public JdbcContext jdbcContext() {
-        return new JdbcContext(dataSource());
+        return new UserDao(dataSource());
     }
 
     @Bean
