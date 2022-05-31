@@ -6,8 +6,8 @@ import java.io.IOException;
 
 public class Calculator {
 
-    public Integer calcSum(String filePath) throws IOException {
-        return fileReadTemplate(filePath, br -> {
+    public Integer calcSum(String filepath) throws IOException {
+        return fileReadTemplate(filepath, br -> {
             Integer sum = 0;
             String line = null;
             while ((line = br.readLine()) != null) {
@@ -17,11 +17,22 @@ public class Calculator {
         });
     }
 
-    private Integer fileReadTemplate(String filePath, BufferedReaderCallback callback) throws IOException {
+    public Integer calcMultiply(String filepath) throws IOException {
+        return fileReadTemplate(filepath, br -> {
+            Integer multiply = 1;
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                multiply *= Integer.parseInt(line);
+            }
+            return multiply;
+        });
+    }
+
+    private Integer fileReadTemplate(String filepath, BufferedReaderCallback callback) throws IOException {
         BufferedReader br = null;
 
         try {
-            br = new BufferedReader(new FileReader(filePath));
+            br = new BufferedReader(new FileReader(filepath));
             return callback.doSomethingWithReader(br);
         } catch (IOException e) {
             throw e;
