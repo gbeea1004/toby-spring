@@ -13,6 +13,7 @@ import java.sql.SQLException;
 @RequiredArgsConstructor
 public class UserDao {
 
+    private final JdbcContext jdbcContext;
     private final DataSource dataSource;
 
     /**
@@ -21,7 +22,7 @@ public class UserDao {
      * @param user 유저 정보
      */
     public void add(User user) throws SQLException {
-        jdbcContextWithStatementStrategy(con -> {
+        jdbcContext.workWithStatementStrategy(con -> {
             PreparedStatement pstmt = con.prepareStatement("insert into users(id, name, password) values (?, ?, ?)");
             pstmt.setString(1, user.getId());
             pstmt.setString(2, user.getName());
@@ -62,7 +63,7 @@ public class UserDao {
      * 유저 전체 삭제
      */
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(con -> con.prepareStatement("delete from users"));
+        jdbcContext.workWithStatementStrategy(con -> con.prepareStatement("delete from users"));
     }
 
     public int getCount() throws SQLException {
@@ -86,34 +87,6 @@ public class UserDao {
                 } catch (SQLException e) {
                 }
             }
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    private void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            con = dataSource.getConnection();
-
-            pstmt = stmt.makePreparedStatement(con);
-
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
             if (pstmt != null) {
                 try {
                     pstmt.close();
