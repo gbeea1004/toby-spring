@@ -14,11 +14,15 @@ public class Calculator {
         return lineReadTemplate(filepath, (line, value) -> value * Integer.parseInt(line), 1);
     }
 
-    private Integer lineReadTemplate(String filepath, LineCallback callback, int initVal) throws IOException {
+    public String concatenate(String filepath) throws IOException {
+        return lineReadTemplate(filepath, (line, value) -> value + line, "");
+    }
+
+    private <T> T lineReadTemplate(String filepath, LineCallback<T> callback, T initVal) throws IOException {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filepath));
-            Integer res = initVal;
+            T res = initVal;
             String line = null;
             while ((line = br.readLine()) != null) {
                 res = callback.doSomethingWithLine(line, res);
