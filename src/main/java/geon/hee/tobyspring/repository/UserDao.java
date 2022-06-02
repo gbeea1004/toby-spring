@@ -4,6 +4,7 @@ import geon.hee.tobyspring.domain.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 public class UserDao {
 
@@ -47,5 +48,13 @@ public class UserDao {
      */
     public int getCount() {
         return jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+    }
+
+    /**
+     * 유저 전체 조회
+     */
+    public List<User> getAll() {
+        return jdbcTemplate.query("select * from users order by id",
+                (rs, rowNum) -> new User(rs.getString("id"), rs.getString("name"), rs.getString("password")));
     }
 }
