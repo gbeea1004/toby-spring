@@ -2,6 +2,7 @@ package geon.hee.tobyspring.repository;
 
 import geon.hee.tobyspring.domain.User;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 public class UserDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final RowMapper<User> userMapper = (rs, rowNum) -> new User(rs.getString("id"), rs.getString("name"), rs.getString("password"));
 
     public UserDao(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -32,7 +34,7 @@ public class UserDao {
      */
     public User get(String id) {
         return jdbcTemplate.queryForObject("select * from users where id = ?",
-                (rs, rowNum) -> new User(rs.getString("id"), rs.getString("name"), rs.getString("password")),
+                userMapper,
                 id);
     }
 
@@ -55,6 +57,6 @@ public class UserDao {
      */
     public List<User> getAll() {
         return jdbcTemplate.query("select * from users order by id",
-                (rs, rowNum) -> new User(rs.getString("id"), rs.getString("name"), rs.getString("password")));
+                userMapper);
     }
 }
