@@ -1,6 +1,6 @@
 package geon.hee.tobyspring.config;
 
-import geon.hee.tobyspring.repository.UserDao;
+import geon.hee.tobyspring.repository.UserDaoJdbc;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -11,8 +11,8 @@ import javax.sql.DataSource;
 public class DaoFactory {
 
     @Bean
-    public UserDao userDao() {
-        return new UserDao(dataSource());
+    public UserDaoJdbc userDao() {
+        return new UserDaoJdbc(dataSource());
     }
 
     @Bean
