@@ -1,5 +1,6 @@
 package geon.hee.tobyspring.repository;
 
+import geon.hee.tobyspring.domain.Level;
 import geon.hee.tobyspring.domain.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -10,7 +11,13 @@ import java.util.List;
 public class UserDaoJdbc implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<User> userMapper = (rs, rowNum) -> new User(rs.getString("id"), rs.getString("name"), rs.getString("password"));
+    private final RowMapper<User> userMapper = (rs, rowNum) ->
+            new User(rs.getString("id")
+                    , rs.getString("name")
+                    , rs.getString("password")
+                    , Level.valueOf(rs.getInt("level"))
+                    , rs.getInt("login")
+                    , rs.getInt("recommend"));
 
     public UserDaoJdbc(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -22,8 +29,8 @@ public class UserDaoJdbc implements UserDao {
      * @param user 유저 정보
      */
     public void add(User user) {
-        jdbcTemplate.update("insert into users(id, name, password) values (?, ?, ?)",
-                user.getId(), user.getName(), user.getPassword());
+        jdbcTemplate.update("insert into users(id, name, password, level, login, recommend) values (?, ?, ?, ?, ?, ?)",
+                user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend());
     }
 
     /**
@@ -58,5 +65,15 @@ public class UserDaoJdbc implements UserDao {
     public List<User> getAll() {
         return jdbcTemplate.query("select * from users order by id",
                 userMapper);
+    }
+
+    /**
+     * 유저 정보 수정
+     * @param user 수정할 유저 정보
+     */
+    @Override
+    public void update(User user) {
+        jdbcTemplate.update("update users set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?"
+        , user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getId());
     }
 }
