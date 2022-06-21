@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
 import java.util.List;
 
+import static geon.hee.tobyspring.service.UserService.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -27,11 +28,11 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         users = Arrays.asList(
-                new User("userA", "박범진", "p1", Level.BASIC, 49, 0),
-                new User("userB", "김나영", "p2", Level.BASIC, 50, 0),
-                new User("userC", "신승환", "p3", Level.SILVER, 60, 29),
-                new User("userD", "이상호", "p4", Level.SILVER, 60, 30),
-                new User("userE", "오민규", "p5", Level.GOLD, 100, 100)
+                new User("userA", "박범진", "p1", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER - 1, 0),
+                new User("userB", "김나영", "p2", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER, 0),
+                new User("userC", "신승환", "p3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1),
+                new User("userD", "이상호", "p4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD),
+                new User("userE", "오민규", "p5", Level.GOLD, 100, Integer.MAX_VALUE)
         );
 
         userDao.deleteAll();
