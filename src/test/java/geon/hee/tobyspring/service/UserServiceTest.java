@@ -14,7 +14,8 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import static geon.hee.tobyspring.service.UserService.*;
+import static geon.hee.tobyspring.service.UserService.MIN_LOGIN_COUNT_FOR_SILVER;
+import static geon.hee.tobyspring.service.UserService.MIN_RECOMMEND_FOR_GOLD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -97,7 +98,7 @@ class UserServiceTest {
         try {
             testUserService.upgradeLevels();
             fail("TestUserServiceException expected");
-        } catch (TestUserServiceException | SQLException e) {
+        } catch (TestUserServiceException e) {
         }
 
         checkLevelUpgraded(users.get(1), false);

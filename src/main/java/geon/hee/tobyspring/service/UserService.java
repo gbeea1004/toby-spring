@@ -4,12 +4,12 @@ import geon.hee.tobyspring.domain.Level;
 import geon.hee.tobyspring.domain.User;
 import geon.hee.tobyspring.repository.UserDao;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -28,10 +28,9 @@ public class UserService {
         userDao.add(user);
     }
 
-    public void upgradeLevels() throws SQLException {
-        TransactionSynchronizationManager.initSynchronization();
-        Connection con = DataSourceUtils.getConnection(dataSource);
-        con.setAutoCommit(false);
+    public void upgradeLevels() {
+        PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
         try {
             List<User> users = userDao.getAll();
@@ -41,14 +40,10 @@ public class UserService {
                     userLevelUpgradePolicy.upgradeLevel(user);
                 }
             }
-            con.commit();
-        } catch (Exception e) {
-            con.rollback();
+            transactionManager.commit(status);
+        } catch (RuntimeException e) {
+            transactionManager.rollback(status);
             throw e;
-        } finally {
-            DataSourceUtils.releaseConnection(con, dataSource);
-            TransactionSynchronizationManager.unbindResource(dataSource);
-            TransactionSynchronizationManager.clearSynchronization();
         }
     }
 }
