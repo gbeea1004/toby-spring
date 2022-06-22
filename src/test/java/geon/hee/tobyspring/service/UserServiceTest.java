@@ -3,16 +3,20 @@ package geon.hee.tobyspring.service;
 import geon.hee.tobyspring.domain.Level;
 import geon.hee.tobyspring.domain.User;
 import geon.hee.tobyspring.repository.UserDao;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
 import static geon.hee.tobyspring.service.UserService.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @SpringBootTest
 class UserServiceTest {
@@ -22,6 +26,9 @@ class UserServiceTest {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private DataSource dataSource;
 
     private List<User> users;
 
@@ -63,7 +70,7 @@ class UserServiceTest {
     }
 
     @Test
-    void upgradeLevels() {
+    void upgradeLevels() throws SQLException {
         // given
         for (User user : users) {
             userDao.add(user);
@@ -80,6 +87,22 @@ class UserServiceTest {
         checkLevelUpgraded(users.get(4), false);
     }
 
+    @Test
+    void upgradeAllOrNothing() {
+        UserService testUserService = new TestUserService(new TestUserLevelUpgradePolicy(userDao, users.get(3).getId()), userDao, dataSource);
+        for (User user : users) {
+            userDao.add(user);
+        }
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        } catch (TestUserServiceException | SQLException e) {
+        }
+
+        checkLevelUpgraded(users.get(1), false);
+    }
+
     private void checkLevelUpgraded(User user, boolean upgraded) {
         User userUpdate = userDao.get(user.getId());
         if (upgraded) {
@@ -87,5 +110,43 @@ class UserServiceTest {
             return;
         }
         assertThat(userUpdate.getLevel()).isEqualTo(user.getLevel());
+    }
+
+    static class TestUserService extends UserService {
+
+        public TestUserService(UserLevelUpgradePolicy userLevelUpgradePolicy, UserDao userDao, DataSource dataSource) {
+            super(userLevelUpgradePolicy, userDao, dataSource);
+        }
+    }
+
+    @AllArgsConstructor
+    static class TestUserLevelUpgradePolicy implements UserLevelUpgradePolicy {
+
+        private final UserDao userDao;
+        private String id;
+
+        @Override
+        public boolean canUpgradeLevel(User user) {
+            Level currentLevel = user.getLevel();
+            switch (currentLevel) {
+                case BASIC: return (user.getLogin() >= MIN_LOGIN_COUNT_FOR_SILVER);
+                case SILVER: return (user.getRecommend() >= MIN_RECOMMEND_FOR_GOLD);
+                case GOLD: return false;
+                default: throw new IllegalArgumentException("Unknown Level: " + currentLevel);
+            }
+        }
+
+        @Override
+        public void upgradeLevel(User user) {
+            if (user.getId().equals(id)) {
+                throw new TestUserServiceException();
+            }
+
+            user.upgradeLevel();
+            userDao.update(user);
+        }
+    }
+
+    static class TestUserServiceException extends RuntimeException {
     }
 }
