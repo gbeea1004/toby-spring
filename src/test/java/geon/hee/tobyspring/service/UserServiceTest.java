@@ -8,8 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +29,7 @@ class UserServiceTest {
     private UserDao userDao;
 
     @Autowired
-    private DataSource dataSource;
+    private PlatformTransactionManager transactionManager;
 
     private List<User> users;
 
@@ -90,7 +90,7 @@ class UserServiceTest {
 
     @Test
     void upgradeAllOrNothing() {
-        UserService testUserService = new TestUserService(new TestUserLevelUpgradePolicy(userDao, users.get(3).getId()), userDao, dataSource);
+        UserService testUserService = new TestUserService(new TestUserLevelUpgradePolicy(userDao, users.get(3).getId()), userDao, transactionManager);
         for (User user : users) {
             userDao.add(user);
         }
@@ -115,8 +115,8 @@ class UserServiceTest {
 
     static class TestUserService extends UserService {
 
-        public TestUserService(UserLevelUpgradePolicy userLevelUpgradePolicy, UserDao userDao, DataSource dataSource) {
-            super(userLevelUpgradePolicy, userDao, dataSource);
+        public TestUserService(UserLevelUpgradePolicy userLevelUpgradePolicy, UserDao userDao, PlatformTransactionManager transactionManager) {
+            super(userLevelUpgradePolicy, userDao, transactionManager);
         }
     }
 

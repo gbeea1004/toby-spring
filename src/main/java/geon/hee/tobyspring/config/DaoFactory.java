@@ -6,7 +6,9 @@ import geon.hee.tobyspring.service.UserLevelUpgradePolicy;
 import geon.hee.tobyspring.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -15,7 +17,7 @@ public class DaoFactory {
 
     @Bean
     public UserService userService() {
-        return new UserService(userLevelUpgradePolicy(), userDao(), dataSource());
+        return new UserService(userLevelUpgradePolicy(), userDao(), platformTransactionManager());
     }
 
     @Bean
@@ -36,5 +38,10 @@ public class DaoFactory {
         dataSource.setUsername("sa");
         dataSource.setPassword("");
         return dataSource;
+    }
+
+    @Bean
+    public PlatformTransactionManager platformTransactionManager() {
+        return new DataSourceTransactionManager(dataSource());
     }
 }
