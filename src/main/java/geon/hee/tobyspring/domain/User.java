@@ -22,6 +22,8 @@ public class User {
 
     private int recommend;
 
+    private String email;
+
     public void upgradeLevel() {
         Level nextLevel = level.nextLevel();
         if (nextLevel == null) {

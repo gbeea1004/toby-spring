@@ -1,7 +1,7 @@
 package geon.hee.tobyspring.config;
 
 import geon.hee.tobyspring.repository.UserDaoJdbc;
-import geon.hee.tobyspring.service.BasicUserLevelUpgradePolicy;
+import geon.hee.tobyspring.service.SendMailUserLevelUpgradePolicy;
 import geon.hee.tobyspring.service.UserLevelUpgradePolicy;
 import geon.hee.tobyspring.service.UserService;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +22,7 @@ public class DaoFactory {
 
     @Bean
     public UserLevelUpgradePolicy userLevelUpgradePolicy() {
-        return new BasicUserLevelUpgradePolicy(userDao());
+        return new SendMailUserLevelUpgradePolicy(userDao());
     }
 
     @Bean

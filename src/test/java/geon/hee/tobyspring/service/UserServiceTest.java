@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,11 +35,11 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         users = Arrays.asList(
-                new User("userA", "박범진", "p1", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER - 1, 0),
-                new User("userB", "김나영", "p2", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER, 0),
-                new User("userC", "신승환", "p3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1),
-                new User("userD", "이상호", "p4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD),
-                new User("userE", "오민규", "p5", Level.GOLD, 100, Integer.MAX_VALUE)
+                new User("userA", "박범진", "p1", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER - 1, 0, "testA@naver.com"),
+                new User("userB", "김나영", "p2", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER, 0, "jvckigh@gmail.com"),
+                new User("userC", "신승환", "p3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1, "testC@naver.com"),
+                new User("userD", "이상호", "p4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD, "corqkrtk3@naver.com"),
+                new User("userE", "오민규", "p5", Level.GOLD, 100, Integer.MAX_VALUE, "testE@naver.com")
         );
 
         userDao.deleteAll();
@@ -71,7 +70,7 @@ class UserServiceTest {
     }
 
     @Test
-    void upgradeLevels() throws SQLException {
+    void upgradeLevels() {
         // given
         for (User user : users) {
             userDao.add(user);

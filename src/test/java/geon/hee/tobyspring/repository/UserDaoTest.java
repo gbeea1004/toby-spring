@@ -15,7 +15,8 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class UserDaoTest {
@@ -34,9 +35,9 @@ class UserDaoTest {
 
     @BeforeEach
     void setUp() {
-        user1 = new User("userA", "성건희", "12341234!", Level.BASIC, 1, 0);
-        user2 = new User("userB", "지코", "asdf!", Level.SILVER, 55, 10);
-        user3 = new User("userC", "재키와이", "evz2!", Level.GOLD, 100, 40);
+        user1 = new User("userA", "성건희", "12341234!", Level.BASIC, 1, 0, "testA@naver.com");
+        user2 = new User("userB", "지코", "asdf!", Level.SILVER, 55, 10, "testB@naver.com");
+        user3 = new User("userC", "재키와이", "evz2!", Level.GOLD, 100, 40, "testC@naver.com");
 
         userDao.deleteAll();
         assertThat(userDao.getCount()).isEqualTo(0);
@@ -51,9 +52,7 @@ class UserDaoTest {
         User findUser = userDao.get(user1.getId());
 
         // then
-        assertThat(findUser.getId()).isEqualTo(user1.getId());
-        assertThat(findUser.getName()).isEqualTo(user1.getName());
-        assertThat(findUser.getPassword()).isEqualTo(user1.getPassword());
+        checkSameUser(user1, findUser);
     }
 
     @Test
@@ -143,6 +142,7 @@ class UserDaoTest {
         user1.setLevel(Level.GOLD);
         user1.setLogin(1000);
         user1.setRecommend(999);
+        user1.setEmail("update@naver.com");
 
         userDao.update(user1);
 
@@ -160,5 +160,6 @@ class UserDaoTest {
         assertThat(user1.getLevel()).isEqualTo(user2.getLevel());
         assertThat(user1.getLogin()).isEqualTo(user2.getLogin());
         assertThat(user1.getRecommend()).isEqualTo(user2.getRecommend());
+        assertThat(user1.getEmail()).isEqualTo(user2.getEmail());
     }
 }
